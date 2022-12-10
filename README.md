@@ -30,6 +30,8 @@ For this, there are four different variations for the ARIMA model, which are:
 - Auto Regressive Moving Average (ARMA): This incorporates both the past errors and values of the series.
 - Auto Regressive Integrated Moving Average (ARIMA): This incorporates both the past errors and values of the series, with an extra 'differencing' component that acts as a lag.
 
+To identify the most suitable ARIMA model to use, you would have to identify each of their Akaike Information Criterion (AIC) value. The lowest has the best balance between model's complexity and errors, and hence shall be used.
+
 ## Exponential Smoothing model
 
 For this, there are three different variations for the Exponential Smoothing model, which are:
