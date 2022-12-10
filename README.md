@@ -32,6 +32,21 @@ For this, there are four different variations for the ARIMA model, which are:
 
 To identify the most suitable ARIMA model to use, you would have to identify each of their Akaike Information Criterion (AIC) value. The lowest has the best balance between model's complexity and errors, and hence shall be used.
 
+After fitting either one of the four variations for the ARIMA model, you can enhance the fit by performing a Grid Search:
+
+![ARIMA Formula](https://github.com/dwoo-work/time-series-forecasting/blob/main/img/ARIMA_Formula.png)
+
+For each ARIMA model, it contains 2 groups, and 6 different variables:
+
+- p: Non-seasonal portion, auto regression parameter
+- d: Non-seasonal portion, integration parameter
+- q: Non-seasonal portion, moving average parameter
+- P: Seasonal portion, auto regression parameter
+- D: Seasonal portion, integration parameter
+- Q: Seasonal portion, moving average parameter
+
+What a grid search does, is essentially finding out every grouping possible, by using a pre-determined range of value for each variable (usually 0 to 2). With that, the AIC value will computed for every grouping possible.
+
 ## Exponential Smoothing model
 
 For this, there are three different variations for the Exponential Smoothing model, which are:
