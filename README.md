@@ -9,6 +9,11 @@ In general, there are two commonly used forecasting models:
 - Auto Regressive Integrated Moving Average (ARIMA): This takes past observations, to gain information for the next observation.
 - Exponential Smoothing: This takes the average of the past forecasts, to gain information for the next observation.
 
+To decide on which model to use, you would have to perform the AD Fuller (ADF) Test to understand the stationality of the time series data. If the P-value is:
+
+- Stationary data (P < 0.05): Perform the ARIMA model.
+- Non-stationary data (P >= 0.05): Perform the Exponential Smoothing model.
+
 After running a model, there is a need to ascertain the accuracy of it. This can be done by four different methods:
 
 - Mean Square Error (MSE): This magnifies the difference, between the actual and the forecast.
