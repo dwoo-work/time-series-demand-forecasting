@@ -85,7 +85,7 @@ pip install matplotlib
 
 ## Sample Dataset
 
-For this, you can download the sales_data_sample_utf8.csv file from the source folder, which is located [here](https://github.com/dwoo-work/MultiCriteriaABC.Analysis/blob/main/src).
+For this, you can download the sales_data_sample_utf8.csv file from the source folder, which is located [here](https://github.com/dwoo-work/time-series-forecasting/tree/main/src).
 
 Ensure that the file is in CSV UTF-8 format, to avoid UnicodeDecodeError later on.
 
