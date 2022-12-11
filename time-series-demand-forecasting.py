@@ -1,4 +1,4 @@
-## TIME SERIES FORECASTING
+## TIME SERIES DEMAND FORECASTING
 #------------------------------------------------------------------------------------------
 # PART 1 - PREPARATION
 
