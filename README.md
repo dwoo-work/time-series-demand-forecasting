@@ -60,6 +60,13 @@ For the smoothing factor for trend, there are two different types, which are:
 - Additive: Seasonal variation remains constant throughout the series.
 - Multiplicative: Seasonal variation changes throughout the series.
 
+For this, there are four different variations for the Holt Winter's model, which are:
+
+- Additive Trend + Additive Seasonality
+- Multiplicative Trend + Additive Seasonality
+- Additive Trend + Multiplicative Seasonality
+- Multiplicative Trend + Multiplicative Seasonality
+
 ## Installation
 
 Use the package manager [pip](https://pip.pypa.io/en/stable/) to install:
