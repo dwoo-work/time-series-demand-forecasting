@@ -2,7 +2,9 @@
 
 This will demonstrate to you how to perform time series forecasting using Python.
 
-The purpose of this is to analyse time series data with the use of statistics, and create a model that performs prediction of the future.
+The purpose of this is to analyse time series data with the use of statistics, and identify the most suitable time series or exponential smoothing model, to perform demand forecasting for the future.
+
+For this script, we will use the past data of motorcycles quantities sold, to perform a demand forecasting for the next 12 months.
 
 In general, there are two commonly used forecasting models:
 
