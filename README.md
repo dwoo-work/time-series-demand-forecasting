@@ -1,6 +1,6 @@
-# Time Series Forecasting
+# Time Series Demand Forecasting
 
-This will demonstrate to you how to perform time series forecasting using Python.
+This will demonstrate to you how to perform time series demand forecasting using Python.
 
 The purpose of this is to analyse time series data with the use of statistics, and identify the most suitable time series or exponential smoothing model, to perform demand forecasting for the future.
 
