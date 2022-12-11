@@ -135,25 +135,19 @@ sales_clean.info()
 ```
 
 Lines 26:  
-Create a new columnn for Revenue within the sales_clean dataframe.
-```python   
-sales_clean['Revenue'] = sales['PRICEEACH'] * sales['QUANTITYORDERED']
-```
-
-Lines 28:  
 Change ORDERDATE from object to datetime.
 ```python   
 sales_clean['ORDERDATE'] = pd.to_datetime(sales_clean['ORDERDATE'])
 ```
 
-Lines 30-31:  
+Lines 28-29:  
 Create a date column within the sales_clean dataframe.
 ```python   
 sales_clean['date'] = sales_clean['ORDERDATE'].dt.strftime("%Y-%m-%d")
 sales_clean['date'] = pd.to_datetime(sales_clean['date'])
 ```
 
-Lines 33-35:  
+Lines 31-33:  
 Create different columns for week, month, and year within the sales_clean dataframe.
 ```python   
 sales_clean['month'] = sales_clean.date.dt.month
@@ -161,13 +155,20 @@ sales_clean['year'] = sales_clean.date.dt.year
 sales_clean['week'] = sales_clean.date.dt.week
 ```
 
-Lines 37:  
-Create a variable for time series, and plot a line chart using it.
+Lines 35-36:  
+Create a column for motorcycles quantity ordered.
 ```python   
-time_series = sales_clean.groupby(['week', 'month', 'year']).agg(date = ('date', 'first'), total_revenue = ('Revenue', np.sum)).reset_index().sort_values('date')
+sales_clean.PRODUCTLINE.unique()
+sales_clean['motorcycles_QUANTITYORDERED'] = sales_clean.loc[sales_clean['PRODUCTLINE'] == 'Motorcycles', 'QUANTITYORDERED']
 ```
 
-Lines 39-41:  
+Lines 38:  
+Create a variable for time series, and plot a line chart using it.
+```python   
+time_series = sales_clean.groupby(['week', 'month', 'year']).agg(date = ('date', 'first'), motorcycles_total_qty_ordered = ('motorcycles_QUANTITYORDERED', np.sum)).reset_index().sort_values('date')
+```
+
+Lines 40-42:  
 Index the date in time_series dataframe.
 ```python   
 time_series.info()
@@ -175,16 +176,18 @@ time_series['date'] = pd.to_datetime(time_series['date'])
 time_series = time_series.set_index('date')
 ```
 
-Lines 43-44:  
-Create a variable for monthly total revenue, and create a line chart for it.
+Lines 44-47:  
+Create a variable for motorcycles total quantity ordered in a monthly series, and create a line chart for it.
 ```python   
-monthly_series = time_series.total_revenue.resample('M').sum()
-monthly_series.plot()
+monthly_series = time_series.motorcycles_total_qty_ordered.resample('M').sum()
+
+monthly_series.plot(label = 'actual')
+plt.legend(loc = 'upper left')
 ```
 
 ### Part 2 - Dissect monthly series data into seasonality, trend, and remainder
 
-Lines 49-54:  
+Lines 52-57:  
 Use the decomposition function to dissect seasonality and trend from the time series data.
 ```python   
 components = sm.tsa.seasonal_decompose(monthly_series)
@@ -195,9 +198,9 @@ trend = components.trend
 remainder = components.resid
 ```
 
-### Part 3 - Perform stationality test for the monthly series data
+### Part 3 - Perform stationality test for monthly series data
 
-Lines 59-62:  
+Lines 62-65:  
 Plot the monthly series chart with the actual data, mean, and the standard deviation.
 ```python   
 monthly_series.plot(label = 'actual')
@@ -206,8 +209,8 @@ monthly_series.rolling(window = 12).std().plot(label = 's.d')
 plt.legend(loc = 'upper left')
 ```
 
-Lines 64-65:  
-Run the Augmented Dickey-Fuller (ADF) test to confirm stationality. The P-Value is 0.004768. Therefore, reject null hypothesis, and confirm that the data is stationary. Therefore, use ARIMA model to compute.
+Lines 67-68:  
+Run the Augmented Dickey-Fuller (ADF) test to confirm stationality. The P-Value is 0.000005783924. Therefore, reject null hypothesis, and confirm that the data is stationary. Therefore, use ARIMA model to compute.
 ```python   
 ad_fuller_test = sm.tsa.stattools.adfuller(monthly_series, autolag = 'AIC')
 ad_fuller_test
@@ -215,14 +218,14 @@ ad_fuller_test
 
 ### Part 4 - [ARIMA Model] Identify which time series model (MA, AR, ARMA, and ARIMA) is the most suitable
 
-Lines 70-71:  
+Lines 73-74:  
 Plot the autocorrelation function (ACF) and the partial autocorrelation function (PACF).
 ```python   
 plot_acf(monthly_series)
 plot_pacf(monthly_series, lags = 13)
 ```
 
-Lines 73-76:  
+Lines 76-79:  
 Prepare all 4 types of ARIMA models (MA, AR, ARMA, and ARIMA).
 ```python   
 model_MA = sm.tsa.statespace.SARIMAX(monthly_series, order = (0, 0, 1))
@@ -231,7 +234,7 @@ model_ARMA = sm.tsa.statespace.SARIMAX(monthly_series, order = (1, 0, 1))
 model_ARIMA = sm.tsa.statespace.SARIMAX(monthly_series, order = (1, 1, 1))
 ```
 
-Lines 78-81:  
+Lines 81-84:  
 Fit all 4 types of ARIMA models (MA, AR, ARMA, and ARIMA).
 ```python   
 result_MA = model_MA.fit()
@@ -240,8 +243,8 @@ result_ARMA = model_ARMA.fit()
 result_ARIMA = model_ARIMA.fit()
 ```
 
-Lines 83-86:  
-Perform Akaike Information Criterion (AIC) Analysis on all 4 types of ARIMA models (MA, AR, ARMA, and ARIMA). The ARIMA model has the lowest AIC value of 765.804. Therefore, it shall be used for later's analysis.
+Lines 86-89:  
+Perform Akaike Information Criterion (AIC) Analysis on all 4 types of ARIMA models (MA, AR, ARMA, and ARIMA). The ARIMA model has the lowest AIC value of 406.908. Therefore, it shall be used for later's analysis.
 ```python   
 result_MA.aic
 result_AR.aic
@@ -249,7 +252,7 @@ result_ARMA.aic
 result_ARIMA.aic
 ```
 
-Lines 88:  
+Lines 91:  
 Run diagnostics for the ARIMA model.
 ```python   
 result_ARIMA.plot_diagnostics(figsize = [20, 16])
@@ -257,35 +260,35 @@ result_ARIMA.plot_diagnostics(figsize = [20, 16])
 
 ### Part 5 - [ARIMA Model] Perform grid search to identify the best possible combination
 
-Lines 93-94:  
+Lines 96-97:  
 Set a pre-determined range of values for p, d, q, P, D, and Q.
 ```python   
 p = d = q = P = D = Q = range(0, 3)
 S = 12
 ```
 
-Lines 96-97:  
+Lines 99-100:  
 Create a variable to store all the possible combinations.
 ```python   
 combinations = list(itertools.product(p, d, q, P, D, Q))
 len(combinations)
 ```
 
-Lines 99-100:  
+Lines 102-103:  
 Identify all possible non-seasonal and seasonal portion orders.
 ```python   
 arima_orders = [(x[0], x[1], x[2]) for x in combinations]
 seasonal_orders = [(x[3], x[4], x[5], S) for x in combinations]
 ```
 
-Lines 102:  
+Lines 105:  
 Save the output of the models in a dataframe.
 ```python   
 results_data = pd.DataFrame(columns = ['p', 'd', 'q', 'P', 'D', 'Q', 'AIC'])
 ```
 
-Lines 104-116:  
-Create a function to automatically compute all the combination's AIC, and create an error handling mechanism.
+Lines 107-119:  
+Create a function to automatically compute all the combination's AIC, and create an error handling mechanism. Running this will take about 1-2 minutes, so please wait for a while.
 ```python   
 for i in range(len(combinations)):
     try:
@@ -302,21 +305,22 @@ for i in range(len(combinations)):
         continue
 ```
 
-Lines 118:  
-Identify the combinations with the lowest AIC. For this dataset, the one with the lowest AIC is combination #180. (p, d, q = 0, 2, 0), (P, D, Q = 2, 0, 0), (AIC = 6.0)
+Lines 121:  
+Identify the combinations with the lowest AIC. For this dataset, the one with the lowest AIC is combination #180. (p, d, q = 2, 1, 0), (P, D, Q = 0, 2, 0), (AIC = 6.0)
 ```python   
 results_data[results_data.AIC == min(results_data.AIC)]
 ```
-### Part 6 - [ARIMA Model] Run the ARIMA model to perform the forecasting.
 
-Lines 123-124:  
-Use the best combination's values, to create and fit the best forecasting model.
+### Part 6 - [ARIMA Model] Run the ARIMA model to perform the forecasting
+
+Lines 127:  
+Use the best combination (no. 573) value, to create and fit the best forecasting model.
 ```python   
-best_model = sm.tsa.statespace.SARIMAX(monthly_series, order = (0, 2, 0), seasonal_order = (2, 0, 0, 12))
+best_model = sm.tsa.statespace.SARIMAX(monthly_series, order = (2, 1, 0), seasonal_order = (0, 2, 0, 12))
 results = best_model.fit()
 ```
 
-Lines 126-128:  
+Lines 129-131:  
 Define fitting model's timeframe (from when the monthly series begin), and identify its fitting value.
 ```python   
 monthly_series
@@ -324,14 +328,14 @@ fitting = results.get_prediction(start = '2003-01-31')
 fitting_mean = fitting.predicted_mean
 ```
 
-Lines 130-131:  
+Lines 133-134:  
 Define forecast model's extended prediction (12 months), and identify its forecast value.
 ```python   
 forecast = results.get_forecast(steps = 12)
 forecast_mean = forecast.predicted_mean
 ```
 
-Lines 133-136:  
+Lines 136-139:  
 Create a plot with fitting line, forecast line, and actual line.
 ```python   
 fitting_mean.plot(label = 'fitting')
@@ -340,16 +344,16 @@ monthly_series.plot(label = 'actual')
 plt.legend(loc = 'upper left')
 ```
 
-Lines 138:  
+Lines 141:  
 Measure the accuracy of the model using the Mean Absolute Error.
 ```python   
 mean_absolute_error = abs(monthly_series - fitting_mean).mean()
 ```
 
-### Part 7 - [Exponential Smoothing Model] Run the Exponential Smoothing model to perform the forecasting.
+### Part 7 - [Exponential Smoothing Model] Run Exponential Smoothing to perform the forecasting
 
-Lines 143-146:  
-Prepare all 4 types of Holt Winter's Exponential Smoothing models.
+Lines 146-149:  
+Prepare all 4 types of Holt Winter's Exponential Smoothing models. For motorcycles quantity ordered, can only run for the model with both trend and seasonal being additive.
 ```python   
 model_expo1 = sms.tsa.holtwinters.ExponentialSmoothing(monthly_series, trend = 'add', seasonal = 'add', seasonal_periods = 12)
 model_expo2 = sms.tsa.holtwinters.ExponentialSmoothing(monthly_series, trend = 'mul', seasonal = 'add', seasonal_periods = 12)
@@ -357,8 +361,8 @@ model_expo3 = sms.tsa.holtwinters.ExponentialSmoothing(monthly_series, trend = '
 model_expo4 = sms.tsa.holtwinters.ExponentialSmoothing(monthly_series, trend = 'mul', seasonal = 'mul', seasonal_periods = 12)
 ```
 
-Lines 148-156:  
-Fit all 4 types of Holt Winter's Exponential Smoothing models.
+Lines 151-159:  
+Fit all 4 types of Holt Winter's Exponential Smoothing models. Since only model 1 can be performed, only can fit for this.
 ```python   
 results_1 = model_expo1.fit()
 results_2 = model_expo2.fit()
@@ -371,8 +375,8 @@ fit3 = model_expo3.fit().predict(0, len(monthly_series))
 fit4 = model_expo4.fit().predict(0, len(monthly_series))
 ```
 
-Lines 158-161:  
-Measure the accuracy of the 4 exponential smoothing models, and identify the one with the lowest mean absolute error (MAE). From this, we can identify that exponential model 2 (multiplicative trend, and additive seasonality) has the lowest MAE of 41640.1153.
+Lines 161-164:  
+Measure the accuracy of the 4 exponential smoothing models. The lowest MAE is the best. mae1: 121.06331375972876, the rest are N.A.
 ```python   
 mae1 = abs(monthly_series - fit1).mean()
 mae2 = abs(monthly_series - fit2).mean()
@@ -380,13 +384,13 @@ mae3 = abs(monthly_series - fit3).mean()
 mae4 = abs(monthly_series - fit4).mean()
 ```
 
-Lines 163:  
-Use the exponential smoothing model with the lowest MAE (in this case, exponential model 2) to perform the forecasting.
+Lines 166:  
+Use the exponential smoothing model with the lowest MAE (model 1) to perform the forecasting.
 ```python   
-forecast = model_expo2.fit().predict(0, len(monthly_series) + 12)
+forecast = model_expo1.fit().predict(0, len(monthly_series) + 12)
 ```
 
-Lines 165-167:  
+Lines 168-170:  
 Create a plot with forecast line, and actual line.
 ```python   
 monthly_series.plot(label = 'actual')

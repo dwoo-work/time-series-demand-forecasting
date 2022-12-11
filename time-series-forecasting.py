@@ -23,8 +23,6 @@ sales = sales.drop_duplicates()
 sales_clean = sales.copy()
 sales_clean.info()
 
-sales_clean['Revenue'] = sales['PRICEEACH'] * sales['QUANTITYORDERED']
-
 sales_clean['ORDERDATE'] = pd.to_datetime(sales_clean['ORDERDATE'])
 
 sales_clean['date'] = sales_clean['ORDERDATE'].dt.strftime("%Y-%m-%d")
@@ -34,14 +32,19 @@ sales_clean['month'] = sales_clean.date.dt.month
 sales_clean['year'] = sales_clean.date.dt.year
 sales_clean['week'] = sales_clean.date.dt.week
 
-time_series = sales_clean.groupby(['week', 'month', 'year']).agg(date = ('date', 'first'), total_revenue = ('Revenue', np.sum)).reset_index().sort_values('date')
+sales_clean.PRODUCTLINE.unique()
+sales_clean['motorcycles_QUANTITYORDERED'] = sales_clean.loc[sales_clean['PRODUCTLINE'] == 'Motorcycles', 'QUANTITYORDERED']
+
+time_series = sales_clean.groupby(['week', 'month', 'year']).agg(date = ('date', 'first'), motorcycles_total_qty_ordered = ('motorcycles_QUANTITYORDERED', np.sum)).reset_index().sort_values('date')
 
 time_series.info()
 time_series['date'] = pd.to_datetime(time_series['date'])
 time_series = time_series.set_index('date')
 
-monthly_series = time_series.total_revenue.resample('M').sum()
-monthly_series.plot()
+monthly_series = time_series.motorcycles_total_qty_ordered.resample('M').sum()
+
+monthly_series.plot(label = 'actual')
+plt.legend(loc = 'upper left')
 
 #------------------------------------------------------------------------------------------
 # PART 2 - DISSECT MONTHLY SERIES DATA INTO SEASONALITY, TREND, AND REMAINDER
@@ -120,7 +123,7 @@ results_data[results_data.AIC == min(results_data.AIC)]
 #------------------------------------------------------------------------------------------
 # PART 6 - [ARIMA MODEL] RUN THE AMIRA MODEL TO PERFORM THE FORECASTING
 
-best_model = sm.tsa.statespace.SARIMAX(monthly_series, order = (0, 2, 0), seasonal_order = (2, 0, 0, 12))
+best_model = sm.tsa.statespace.SARIMAX(monthly_series, order = (2, 1, 0), seasonal_order = (0, 2, 0, 12))
 results = best_model.fit()
 
 monthly_series
@@ -138,7 +141,7 @@ plt.legend(loc = 'upper left')
 mean_absolute_error = abs(monthly_series - fitting_mean).mean()
 
 #------------------------------------------------------------------------------------------
-# PART 7 - [EXPONENTIAL SMOOTHING MODEL] RUN THE EXPONENTIAL SMOOTHING MODEL TO PERFORM THE FORECASTING
+# PART 7 - [EXPONENTIAL SMOOTHING MODEL] RUN EXPONENTIAL SMOOTHING TO PERFORM THE FORECASTING
 
 model_expo1 = sms.tsa.holtwinters.ExponentialSmoothing(monthly_series, trend = 'add', seasonal = 'add', seasonal_periods = 12)
 model_expo2 = sms.tsa.holtwinters.ExponentialSmoothing(monthly_series, trend = 'mul', seasonal = 'add', seasonal_periods = 12)
@@ -160,7 +163,7 @@ mae2 = abs(monthly_series - fit2).mean()
 mae3 = abs(monthly_series - fit3).mean()
 mae4 = abs(monthly_series - fit4).mean()
 
-forecast = model_expo2.fit().predict(0, len(monthly_series) + 12)
+forecast = model_expo1.fit().predict(0, len(monthly_series) + 12)
 
 monthly_series.plot(label = 'actual')
 forecast.plot(label = 'forecast')
