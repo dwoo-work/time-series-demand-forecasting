@@ -187,6 +187,8 @@ monthly_series.plot(label = 'actual').set(title = 'Total Qty. of Motorcycles Sol
 plt.legend(loc = 'upper left')
 ```
 
+![Plot 1](https://github.com/dwoo-work/time-series-demand-forecasting/blob/main/plots/plot1.png)
+
 ### Part 2 - Dissect monthly series data into seasonality, trend, and remainder
 
 Lines 52-57:  
@@ -200,6 +202,8 @@ trend = components.trend
 remainder = components.resid
 ```
 
+![Plot 2](https://github.com/dwoo-work/time-series-demand-forecasting/blob/main/plots/plot2.png)
+
 ### Part 3 - Perform stationality test for monthly series data
 
 Lines 62-65:  
@@ -210,6 +214,8 @@ monthly_series.rolling(window = 12).mean().plot(label = 'mean')
 monthly_series.rolling(window = 12).std().plot(label = 's.d')
 plt.legend(loc = 'upper left')
 ```
+
+![Plot 3](https://github.com/dwoo-work/time-series-demand-forecasting/blob/main/plots/plot3.png)
 
 Lines 67-68:  
 Run the Augmented Dickey-Fuller (ADF) test to confirm stationality. The P-Value is 0.000005783924. Therefore, reject null hypothesis, and confirm that the data is stationary. Therefore, use ARIMA model to compute.
@@ -226,6 +232,9 @@ Plot the autocorrelation function (ACF) and the partial autocorrelation function
 plot_acf(monthly_series)
 plot_pacf(monthly_series, lags = 13)
 ```
+
+![Plot 4](https://github.com/dwoo-work/time-series-demand-forecasting/blob/main/plots/plot4.png)
+![Plot 5](https://github.com/dwoo-work/time-series-demand-forecasting/blob/main/plots/plot5.png)
 
 Lines 76-79:  
 Prepare all 4 types of ARIMA models (MA, AR, ARMA, and ARIMA).
@@ -259,6 +268,8 @@ Run diagnostics for the ARIMA model.
 ```python   
 result_ARIMA.plot_diagnostics(figsize = [20, 16])
 ```
+
+![Plot 6](https://github.com/dwoo-work/time-series-demand-forecasting/blob/main/plots/plot6.png)
 
 ### Part 5 - [ARIMA Model] Perform grid search to identify the best possible combination
 
@@ -346,6 +357,8 @@ monthly_series.plot(label = 'actual')
 plt.legend(loc = 'upper left')
 ```
 
+![Plot 7](https://github.com/dwoo-work/time-series-demand-forecasting/blob/main/plots/plot7.png)
+
 Lines 141:  
 Measure the accuracy of the model using the Mean Absolute Error.
 ```python   
@@ -399,6 +412,8 @@ monthly_series.plot(label = 'actual').set(title = 'Forecast Total Qty. of Motorc
 forecast.plot(label = 'forecast')
 plt.legend(loc = 'upper left')
 ```
+
+![Plot 8](https://github.com/dwoo-work/time-series-demand-forecasting/blob/main/plots/plot8.png)
 
 ## Credit
 
