@@ -43,14 +43,14 @@ time_series = time_series.set_index('date')
 
 monthly_series = time_series.motorcycles_total_qty_ordered.resample('M').sum()
 
-monthly_series.plot(label = 'actual')
+monthly_series.plot(label = 'actual').set(title = 'Total Qty. of Motorcycles Sold from Feb 2003 - May 2005')
 plt.legend(loc = 'upper left')
 
 #------------------------------------------------------------------------------------------
 # PART 2 - DISSECT MONTHLY SERIES DATA INTO SEASONALITY, TREND, AND REMAINDER
 
 components = sm.tsa.seasonal_decompose(monthly_series)
-components.plot()
+components.plot().set
 
 seasonality = components.seasonal
 trend = components.trend
@@ -59,7 +59,7 @@ remainder = components.resid
 #------------------------------------------------------------------------------------------
 # PART 3 - PERFORM STATIONALITY TEST FOR MONTHLY SERIES DATA
 
-monthly_series.plot(label = 'actual')
+monthly_series.plot(label = 'actual').set(title = 'Total Qty. of Motorcycles Sold (with mean and S.D from Feb 2003 - May 2005)')
 monthly_series.rolling(window = 12).mean().plot(label = 'mean')
 monthly_series.rolling(window = 12).std().plot(label = 's.d')
 plt.legend(loc = 'upper left')
@@ -133,7 +133,7 @@ fitting_mean = fitting.predicted_mean
 forecast = results.get_forecast(steps = 12)
 forecast_mean = forecast.predicted_mean
 
-fitting_mean.plot(label = 'fitting')
+fitting_mean.plot(label = 'fitting').set(title = 'Forecast Total Qty. of Motorcycles Sold from May 2005 - May 2006 (ARIMA Model)')
 forecast_mean.plot(label = 'forecast')
 monthly_series.plot(label = 'actual')
 plt.legend(loc = 'upper left')
@@ -165,6 +165,6 @@ mae4 = abs(monthly_series - fit4).mean()
 
 forecast = model_expo1.fit().predict(0, len(monthly_series) + 12)
 
-monthly_series.plot(label = 'actual')
+monthly_series.plot(label = 'actual').set(title = 'Forecast Total Qty. of Motorcycles Sold from May 2005 - May 2006 (Exponential Smoothing Model)')
 forecast.plot(label = 'forecast')
 plt.legend(loc = 'upper left')
