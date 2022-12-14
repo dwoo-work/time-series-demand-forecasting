@@ -17,7 +17,7 @@ from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 plt.style.use('fivethirtyeight')
 rcParams['figure.figsize'] = 16, 8
 
-sales = pd.read_csv('sales_data_sample_utf8.csv')
+sales = pd.read_csv('https://github.com/dwoo-work/time-series-demand-forecasting/blob/main/src/sales_data_sample_utf8.csv')
 sales = sales.drop_duplicates()
 
 sales_clean = sales.copy()

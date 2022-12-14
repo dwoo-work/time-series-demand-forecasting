@@ -125,7 +125,7 @@ rcParams['figure.figsize'] = 16, 8
 Lines 20-21:  
 Import and clean the CSV dataframe.
 ```python   
-sales = pd.read_csv('sales_data_sample_utf8.csv')
+sales = pd.read_csv('https://github.com/dwoo-work/time-series-demand-forecasting/blob/main/src/sales_data_sample_utf8.csv')
 sales = sales.drop_duplicates()
 ```
 
