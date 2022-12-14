@@ -50,7 +50,7 @@ plt.legend(loc = 'upper left')
 # PART 2 - DISSECT MONTHLY SERIES DATA INTO SEASONALITY, TREND, AND REMAINDER
 
 components = sm.tsa.seasonal_decompose(monthly_series)
-components.plot().set
+components.plot()
 
 seasonality = components.seasonal
 trend = components.trend

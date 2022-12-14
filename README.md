@@ -183,7 +183,7 @@ Create a variable for motorcycles total quantity ordered in a monthly series, an
 ```python   
 monthly_series = time_series.motorcycles_total_qty_ordered.resample('M').sum()
 
-monthly_series.plot(label = 'actual')
+monthly_series.plot(label = 'actual').set(title = 'Total Qty. of Motorcycles Sold from Feb 2003 - May 2005')
 plt.legend(loc = 'upper left')
 ```
 
@@ -205,7 +205,7 @@ remainder = components.resid
 Lines 62-65:  
 Plot the monthly series chart with the actual data, mean, and the standard deviation.
 ```python   
-monthly_series.plot(label = 'actual')
+monthly_series.plot(label = 'actual').set(title = 'Total Qty. of Motorcycles Sold (with mean and S.D from Feb 2003 - May 2005)')
 monthly_series.rolling(window = 12).mean().plot(label = 'mean')
 monthly_series.rolling(window = 12).std().plot(label = 's.d')
 plt.legend(loc = 'upper left')
@@ -340,7 +340,7 @@ forecast_mean = forecast.predicted_mean
 Lines 136-139:  
 Create a plot with fitting line, forecast line, and actual line.
 ```python   
-fitting_mean.plot(label = 'fitting')
+fitting_mean.plot(label = 'fitting').set(title = 'Forecast Total Qty. of Motorcycles Sold from May 2005 - May 2006 (ARIMA Model)')
 forecast_mean.plot(label = 'forecast')
 monthly_series.plot(label = 'actual')
 plt.legend(loc = 'upper left')
@@ -395,7 +395,7 @@ forecast = model_expo1.fit().predict(0, len(monthly_series) + 12)
 Lines 168-170:  
 Create a plot with forecast line, and actual line.
 ```python   
-monthly_series.plot(label = 'actual')
+monthly_series.plot(label = 'actual').set(title = 'Forecast Total Qty. of Motorcycles Sold from May 2005 - May 2006 (Exponential Smoothing Model)')
 forecast.plot(label = 'forecast')
 plt.legend(loc = 'upper left')
 ```
